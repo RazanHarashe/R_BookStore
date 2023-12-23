@@ -13,6 +13,13 @@ router.post(
   asyncHandler(bookController.createBook)
 );
 
+router.put(
+  "/:bookId",
+  auth(endPoint.update),
+  fileUpload(fileValidation.image).single("image"),
+  asyncHandler(bookController.updateBook)
+);
+
 router.get(
   "/:bookId",
   auth(endPoint.specific),
@@ -23,5 +30,23 @@ router.get(
   "/genre/:genreId",
   auth(endPoint.get),
   asyncHandler(bookController.getBookWithGenre)
+);
+
+router.get(
+  "/",
+  auth(endPoint.getAll),
+  asyncHandler(bookController.getAllBooks)
+);
+
+router.delete(
+  "/softDelete/:bookId",
+  auth(endPoint.delete),
+  asyncHandler(bookController.softDeleteBook)
+);
+
+router.delete(
+  "/:bookId",
+  auth(endPoint.delete),
+  asyncHandler(bookController.deleteBook)
 );
 export default router;

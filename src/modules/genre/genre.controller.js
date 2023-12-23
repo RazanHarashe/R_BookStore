@@ -68,11 +68,11 @@ export const updateGenre = async (req, res, next) => {
     genre.createDate = req.body.createDate;
   }
   if (genre.isModified()) {
-  genre.updateBy = req.user._id;
-  const result = await genre.save();
-  return res.status(200).json({ message: "Success", result });
-} else {
-    return res.status(200).json({ message: 'No updates', });
+    genre.updateBy = req.user._id;
+    const result = await genre.save();
+    return res.status(200).json({ message: "Success", result });
+  } else {
+    return res.status(200).json({ message: "No updates" });
   }
 };
 
