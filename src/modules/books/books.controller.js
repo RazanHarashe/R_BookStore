@@ -2,6 +2,7 @@ import slugify from "slugify";
 import genreModel from "../../../db/model/genre.model.js";
 import cloudinary from "../../services/cloudinary.js";
 import bookModel from "../../../db/model/book.model.js";
+import { pagination } from "../../services/pagination.js";
 
 export const createBook = async (req, res) => {
   const { title, price, discount, genreId } = req.body;
@@ -91,8 +92,34 @@ export const updateBook = async (req, res, next) => {
 };
 
 export const getAllBooks = async (req, res) => {
-  const books = await bookModel.find({ isDelete: false });
-  return res.status(200).json({ message: "Success", books });
+  const { skip, limit } = pagination(req.query.page, req.query.limit);
+  let queryObj = { ...req.query };
+  const execQuery = ["page", "limit", "skip", "sort", "search", "fields"];
+  execQuery.map((ele) => {
+    delete queryObj[ele];
+  });
+  queryObj = JSON.stringify(queryObj); //to string
+  queryObj = queryObj.replace(
+    /\b(gt|gte|lt|lte|in|nin|eq|neq)\b/g,
+    (match) => `$${match}`
+  );
+  queryObj = JSON.parse(queryObj);
+  const mongooseQuery = bookModel.find(queryObj).limit(limit).skip(skip);
+  if (req.query.search) {
+    mongooseQuery.find({
+      $or: [
+        { title: { $regex: req.query.search, $options: "i" } },
+        { author: { $regex: req.query.search, $options: "i" } },
+        { overview: { $regex: req.query.search, $options: "i" } },
+      ],
+    });
+  }
+  mongooseQuery.select(req.query.fields?.replaceAll(",", " "));
+  const books = await mongooseQuery.sort(req.query.sort?.replaceAll(",", " "));
+  const count = await bookModel.estimatedDocumentCount();
+  return res
+    .status(200)
+    .json({ message: "Success", page: books.length, total: count, books });
 };
 
 export const getBook = async (req, res) => {
