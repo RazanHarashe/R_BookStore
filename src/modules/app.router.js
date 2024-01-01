@@ -11,8 +11,8 @@ const initApp = (app, express) => {
   app.use("/genre", genreRouter);
   app.use("/books", bookRouter);
 
-  app.get("*", (req, res) => {
-    return res.json({ message: "page not found" });
+  app.use("*", (req, res) => {
+    return res.status(404).json({ message: "page not found" });
   });
 };
 
