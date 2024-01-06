@@ -4,6 +4,7 @@ import genreRouter from "./genre/genre.router.js";
 import bookRouter from "./books/books.router.js";
 import cartRouter from "./cart/cart.router.js";
 import couponRouter from "./coupon/coupon.router.js";
+import orderRouter from "./order/order.router.js";
 import cors from "cors";
 const initApp = (app, express) => {
   app.use(express.json());
@@ -13,7 +14,8 @@ const initApp = (app, express) => {
   app.use("/genre", genreRouter);
   app.use("/books", bookRouter);
   app.use("/cart", cartRouter);
-  app.use("/coupon",couponRouter);
+  app.use("/coupon", couponRouter);
+  app.use("/order", orderRouter);
 
   app.use("*", (req, res) => {
     return res.status(404).json({ message: "page not found" });

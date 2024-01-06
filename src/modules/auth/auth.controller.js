@@ -176,7 +176,7 @@ a[x-apple-data-detectors] {
 };
 
 export const signUp = async (req, res) => {
-  const { userName, email, password } = req.body;
+  const { userName, email, password ,phone,address} = req.body;
   const user = await userModel.findOne({ email });
   if (user) {
     return res.status(409).json({ message: "email already exists" });
@@ -202,6 +202,8 @@ export const signUp = async (req, res) => {
     email,
     password: hashedPassword,
     image: { secure_url, public_id },
+    phone,
+    address,
   });
   return res.status(201).json({ message: "success", createUser });
 };
