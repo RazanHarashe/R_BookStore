@@ -4,8 +4,9 @@ import { auth } from "../../middleware/auth.js";
 import { endPoint } from "./books.endpoint.js";
 import fileUpload, { fileValidation } from "../../services/multer.js";
 import { asyncHandler } from "../../services/errorHandling.js";
+import reviwRouter from "../review/review.router.js";
 const router = Router();
-
+router.use("/:bookId/review", reviwRouter);
 router.post(
   "/",
   auth(endPoint.create),

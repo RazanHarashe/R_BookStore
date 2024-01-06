@@ -61,8 +61,14 @@ const bookSchema = new Schema(
   },
   {
     timestamps: true,
+    toJSON: { virtuals: true },
+    toObject: { virtuals: true },
   }
 );
-
+bookSchema.virtual("reviews", {
+  ref: "Review",
+  localField: "__id",
+  foreignField: "bookId",
+});
 const bookModel = mongoose.models.Book || model("Book", bookSchema);
 export default bookModel;
