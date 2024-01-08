@@ -37,20 +37,47 @@ export const getWishslist = async (req, res) => {
   return res.status(200).json({ message: "success", wishslist });
 };
 
+// export const removeFromWishslist = async (req, res) => {
+//   const { bookId } = req.body;
+//   const wishslist = await wishsListModel.findOne({ userId: req.user._id });
+
+//   if (!wishslist) {
+//     return res.status(404).json({ message: "Wishslist not found" });
+//   }
+
+//  if(wishslist.books = wishslist.books.filter(
+//     (item) => !item.bookId.equals(bookId)
+//   )){
+//   await wishslist.save();
+//   return res
+//     .status(200)
+//     .json({ message: "Book removed from wishslist", wishslist });
+//   }
+//   return res
+//   .status(400)
+//   .json({ message: "Book not exists in the wishslist" });
+
+  
+// };
+
 export const removeFromWishslist = async (req, res) => {
   const { bookId } = req.body;
-  const wishslist = await wishsListModel.findOne({ userId: req.user._id });
 
-  if (!wishslist) {
-    return res.status(404).json({ message: "Wishslist not found" });
+  try {
+    const wishslist = await wishsListModel.findOneAndUpdate(
+      { userId: req.user._id, "books.bookId": bookId },
+      {
+        $pull: {
+          books: { bookId },
+        },
+      },
+      { new: true }
+    );
+    if (!wishslist) {
+      return res.status(404).json({ message: "Book not found in the wishlist" });
+    }
+    return res.status(200).json({ message: "Book removed from wishlist", wishslist });
+  } catch (error) {
+    return res.status(500).json({ message: "error", error: error.message });
   }
-
-  wishslist.books = wishslist.books.filter(
-    (item) => !item.bookId.equals(bookId)
-  );
-  await wishslist.save();
-
-  return res
-    .status(200)
-    .json({ message: "Book removed from wishslist", wishslist });
 };
