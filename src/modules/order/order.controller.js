@@ -149,7 +149,7 @@ export const changeStatus = async (req, res, next) => {
   if (order.couponName) {
     await couponModel.updateOne(
       { name: order.couponName },
-      { $pull: { usedBy: order } }
+      { $pull: { usedBy: order.userId } }
     );
   }
 
